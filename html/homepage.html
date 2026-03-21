@@ -24,7 +24,10 @@
   <!-- Navbar -->
   <header class="flex justify-between items-center px-6 py-4 border-b border-gray-700">
     <div class="flex items-center gap-3">
-      <img src="/PPL2026/images/team-logo/ipl_header.png" class="h-10" alt="IPL Fantasy">
+      <img id="logo"
+       src="/PPL2026/images/team-logo/ppl_dark_logo.svg"
+       class="h-10"
+       alt="IPL Fantasy">
       <!--<h1 class="text-xl font-bold">Prediction Premier League</h1>-->
     </div>
 
@@ -158,11 +161,19 @@
     // Theme Toggle Logic
     const app = document.getElementById("app");
     const toggle = document.getElementById("themeToggle");
+    const logo = document.getElementById("logo");
 
     // Load saved theme
     if (localStorage.getItem("theme") === "light") {
       app.classList.add("light");
       toggle.innerText = "☀️";
+    }
+
+    function updateLogo() {
+      const isLight = app.classList.contains("light");
+      logo.src = isLight
+        ? "/PPL2026/images/team-logo/ppl_light_logo.svg"
+        : "/PPL2026/images/team-logo/ppl_dark_logo.svg";
     }
 
     toggle.addEventListener("click", () => {
@@ -172,8 +183,10 @@
       toggle.innerText = isLight ? "☀️" : "🌙";
 
       localStorage.setItem("theme", isLight ? "light" : "dark");
-    });
 
+      updateLogo();
+    });
+    
     renderNextMatches();
   </script>
 
