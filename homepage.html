@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IPL Fantasy Predictor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #e2e8f0;
+    }
+
+    .light {
+      --bg: #f9fafb;
+      --card: #ffffff;
+      --text: #111827;
+    }
+  </style>
+</head>
+<body id="app" class="bg-[var(--bg)] text-[var(--text)] font-sans transition-colors duration-300">
+
+  <!-- Navbar -->
+  <header class="flex justify-between items-center px-6 py-4 border-b border-gray-700">
+    <div class="flex items-center gap-3">
+      <img src="/PPL2026/images/team-logo/ipl_header.png" class="h-10" alt="IPL Fantasy">
+      <!--<h1 class="text-xl font-bold">Prediction Premier League</h1>-->
+    </div>
+
+    <div class="flex items-center gap-4">
+      <nav class="space-x-6 hidden md:block">
+        <a href="#" class="hover:text-yellow-400">Home</a>
+        <a href="#" class="hover:text-yellow-400">Leaderboard</a>
+        <a href="#" class="hover:text-yellow-400">My Picks</a>
+      </nav>
+
+      <!-- Theme Toggle -->
+      <button id="themeToggle" class="px-3 py-1 rounded-lg bg-gray-700 text-sm">
+        🌙
+      </button>
+    </div>
+  </header>
+
+  <!-- Last Updated -->
+  <section class="text-right px-5">
+    <p class="text-gray-400 font-bold">Last Updated : 21st March 2023</p>
+  </section>
+
+  <!-- Hero -->
+  <section class="text-center py-10">
+    <h2 class="text-4xl font-bold mb-4">Predict. Compete. Win.</h2>
+    <p class="text-gray-400">Pick match winners and climb the leaderboard</p>
+  </section>
+
+  <!-- Next Matches Section -->
+  <section class="px-6 mb-12">
+    <h3 class="text-2xl font-semibold mb-6">Next Matches</h3>
+    <div id="nextMatches" class="space-y-6"></div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center py-6 border-t border-gray-700 text-gray-400 mt-12">
+    © 2026 IPL Fantasy Predictor
+  </footer>
+
+  <script src="/PPL2026/src/js/schedule.js"></script>
+  <script>
+    console.log(schedule);
+
+    function getNextMatches() {
+      const now = new Date();
+
+      const upcoming = schedule
+        .filter(m => new Date(m.time) > now)
+        .sort((a, b) => new Date(a.time) - new Date(b.time));
+
+      if (upcoming.length === 0) return [];
+
+      const firstMatchDate = new Date(upcoming[0].time).toDateString();
+
+      return upcoming.filter(m => new Date(m.time).toDateString() === firstMatchDate);
+    }
+
+    function formatCountdown(ms) {
+      const totalSeconds = Math.floor(ms / 1000);
+      const hrs = Math.floor(totalSeconds / 3600);
+      const mins = Math.floor((totalSeconds % 3600) / 60);
+      const secs = totalSeconds % 60;
+
+      return `${hrs}h ${mins}m ${secs}s`;
+    }
+
+    function renderNextMatches() {
+      const container = document.getElementById("nextMatches");
+      container.innerHTML = "";
+
+      const nextMatches = getNextMatches();
+
+      nextMatches.forEach((match, index) => {
+        const card = document.createElement("div");
+        card.className = "bg-[var(--card)] rounded-2xl p-6 text-center shadow-lg";
+
+        card.innerHTML = `
+          <div class="flex justify-center items-center gap-8 mb-6">
+            <div>
+              <img src="${match.team1Logo}" class="h-20 mx-auto mb-2" />
+              <p class="font-bold" style="color:${match.team1Color}">${match.team1}</p>
+            </div>
+
+            <span class="text-gray-400 text-xl">vs</span>
+
+            <div>
+              <img src="${match.team2Logo}" class="h-20 mx-auto mb-2" />
+              <p class="font-bold" style="color:${match.team2Color}">${match.team2}</p>
+            </div>
+          </div>
+
+          <p class="text-gray-400 mb-2">${new Date(match.time).toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          <p id="countdown-${index}" class="text-yellow-400 font-semibold mb-4"></p>
+
+          <div class="w-full bg-gray-700 rounded-full h-4 overflow-hidden">
+            <div style="width:${match.support1}%; background:${match.team1Color}" class="h-4"></div>
+          </div>
+
+          <div class="flex justify-between text-sm mt-2">
+            <span>${match.team1} ${match.support1}%</span>
+            <span>${match.team2} ${match.support2}%</span>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      startCountdowns(nextMatches);
+    }
+
+    function startCountdowns(matchesList) {
+      setInterval(() => {
+        const now = new Date();
+
+        matchesList.forEach((match, index) => {
+          const matchTime = new Date(match.time);
+          const diff = matchTime - now;
+
+          const el = document.getElementById(`countdown-${index}`);
+          if (!el) return;
+
+          if (diff <= 0) {
+            el.innerText = "Match Started";
+          } else {
+            el.innerText = "Starts in " + formatCountdown(diff);
+          }
+        });
+      }, 1000);
+    }
+
+    // Theme Toggle Logic
+    const app = document.getElementById("app");
+    const toggle = document.getElementById("themeToggle");
+
+    // Load saved theme
+    if (localStorage.getItem("theme") === "light") {
+      app.classList.add("light");
+      toggle.innerText = "☀️";
+    }
+
+    toggle.addEventListener("click", () => {
+      app.classList.toggle("light");
+
+      const isLight = app.classList.contains("light");
+      toggle.innerText = isLight ? "☀️" : "🌙";
+
+      localStorage.setItem("theme", isLight ? "light" : "dark");
+    });
+
+    renderNextMatches();
+  </script>
+
+</body>
+</html>
