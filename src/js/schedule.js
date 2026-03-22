@@ -7,8 +7,8 @@ const schedule = [
         team1Logo: "/PPL2026/images/team-logo/rcb.avif",
         team2Logo: "/PPL2026/images/team-logo/srh.avif",
         time: "2026-03-28T19:30:00",
-        support1: 50,
-        support2: 50
+        support1: 70,
+        support2: 30
       },
       {
         team1: "MI",
@@ -220,3 +220,5 @@ const schedule = [
         support2: 50
       }
     ];
+
+export default schedule;

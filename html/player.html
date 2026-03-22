@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Player Profile</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #e2e8f0;
+        }
+
+        .light {
+            --bg: #f9fafb;
+            --card: #ffffff;
+            --text: #111827;
+        }
+    </style>
+</head>
+
+<body id="app" class="bg-[var(--bg)] text-[var(--text)] transition-colors duration-300">
+
+    <!-- Navbar -->
+    <header class="flex justify-between items-center px-6 py-4 border-b border-gray-700">
+        <h1 class="text-xl font-bold">Player Profile</h1>
+
+        <div class="flex items-center gap-4">
+            <nav class="space-x-6 hidden md:block">
+                <a href="/PPL2026/html/homepage.html" class="hover:text-yellow-400">Home</a>
+                <a href="#" class="hover:text-yellow-400">Center Level</a>
+                <a href="#" class="hover:text-yellow-400">Hall of Fame</a>
+                <a href="#" class="hover:text-yellow-400">Team</a>
+            </nav>
+
+            <button id="themeToggle" class="px-3 py-1 rounded-lg bg-gray-700 text-sm">
+                🌙
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 p-6">
+
+        <!-- LEFT SIDEBAR -->
+        <aside class="md:col-span-1 space-y-6">
+
+            <div class="bg-[var(--card)] p-5 rounded-2xl shadow-lg border border-white/10 text-center">
+
+                <!-- Player Selector -->
+                <select id="playerDropdown" class="w-full mb-4 p-2 rounded-lg bg-[var(--card)] border border-white/10">
+                </select>
+
+                <img id="playerImage" src="https://via.placeholder.com/120" class="mx-auto rounded-full mb-4" />
+
+                <h2 id="playerName" class="text-xl font-semibold">Player Name</h2>
+
+                <div class="mt-4 space-y-2 text-sm">
+                    <p>🏆 Rank: <span id="rank" class="font-bold"></span></p>
+                    <p>🏢 Center Rank: <span id="centerRank" class="font-bold"></span></p>
+                    <p>⭐ Points: <span id="points" class="font-bold"></span></p>
+                </div>
+            </div>
+
+            <!-- Last 5 Predictions -->
+            <div class="bg-[var(--card)] p-5 rounded-2xl shadow-lg border border-white/10">
+                <h3 class="text-lg font-semibold mb-3">Last 5 Predictions</h3>
+
+                <div id="last5" class="flex gap-3 justify-center"></div>
+            </div>
+
+            <!-- Last 5 Predictions -->
+            <div class="bg-[var(--card)] p-5 rounded-2xl shadow-lg border border-white/10">
+                <h3 class="text-lg font-semibold mb-3">Leaderboard</h3>
+
+                <div id="playerLeaderboard" class="space-y-3"></div>
+            </div>
+
+        </aside>
+
+        <!-- RIGHT MAIN CONTENT -->
+        <main class="md:col-span-3 space-y-6">
+
+            <!-- Future Predictions -->
+            <section>
+                <h3 class="text-2xl font-semibold mb-4">Upcoming Predictions</h3>
+
+                <div id="predictions" class="space-y-4"></div>
+            </section>
+
+            <section>
+                <h3 class="text-2xl font-semibold mb-4">Compare with Players</h3>
+
+                <!-- Selector -->
+                <div class="mb-4">
+                    <select id="playerSelect" class="w-full p-2 rounded-lg bg-[var(--card)] border border-white/10">
+                        <option value="">Select player</option>
+                    </select>
+
+                    <div id="selectedPlayers" class="flex gap-2 mt-3 flex-wrap"></div>
+                </div>
+
+                <!-- Chart -->
+                <div class="h-[20vh] bg-[var(--card)] p-5 rounded-2xl border border-white/10">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script type="module">
+        import { initLeaderboards } from '/PPL2026/src/js/leaderboard.js';
+        initLeaderboards();
+    </script>
+
+    <script type="module" src="/PPL2026/src/js/player.js"></script>
+
+    <!-- Theme Toggle -->
+    <script>
+        const app = document.getElementById("app");
+        const toggle = document.getElementById("themeToggle");
+
+        if (localStorage.getItem("theme") === "light") {
+            app.classList.add("light");
+            toggle.innerText = "☀️";
+        }
+
+        toggle.addEventListener("click", () => {
+            app.classList.toggle("light");
+
+            const isLight = app.classList.contains("light");
+            toggle.innerText = isLight ? "☀️" : "🌙";
+
+            localStorage.setItem("theme", isLight ? "light" : "dark");
+        });
+    </script>
+
+</body>
+
+</html>

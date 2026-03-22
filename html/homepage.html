@@ -33,9 +33,10 @@
 
     <div class="flex items-center gap-4">
       <nav class="space-x-6 hidden md:block">
-        <a href="#" class="hover:text-yellow-400">Home</a>
-        <a href="#" class="hover:text-yellow-400">Leaderboard</a>
-        <a href="#" class="hover:text-yellow-400">My Picks</a>
+        <a href="/PPL2026/html/player.html" class="hover:text-yellow-400">My Picks</a>
+        <a href="#" class="hover:text-yellow-400">Center Level</a>
+        <a href="#" class="hover:text-yellow-400">Hall of Fame</a>
+        <a href="#" class="hover:text-yellow-400">Team</a>
       </nav>
 
       <!-- Theme Toggle -->
@@ -46,8 +47,8 @@
   </header>
 
   <!-- Last Updated -->
-  <section class="text-right px-5">
-    <p class="text-gray-400 font-bold">Last Updated : 21st March 2023</p>
+  <section class="text-right px-5 text-[var(--text)]">
+    <p class="font-bold">Last Updated : 21st March 2023</p>
   </section>
 
   <!-- Hero -->
@@ -58,106 +59,103 @@
 
   <!-- Next Matches Section -->
   <section class="px-6 mb-12">
-    <h3 class="text-2xl font-semibold mb-6">Next Matches</h3>
+    <h3 class="text-2xl font-semibold mb-6">🏏 Next Matches</h3>
     <div id="nextMatches" class="space-y-6"></div>
   </section>
 
+  <script type="module">
+    import { initNextMatches } from '/PPL2026/src/js/nextmatch.js';
+    initNextMatches();
+  </script>
+
+  <!-- Leaderboard Section -->
+  <section class="px-6 mb-12">
+    <!-- <h3 class="text-2xl font-semibold mb-6 span"></h3> -->
+    <!-- Player Leaderboard -->
+    <!-- Grid Container -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mx-auto">
+
+    <!-- Player Leaderboard -->
+    <div>
+      <h2 class="text-xl font-semibold mb-4 text-center">
+        🏆 Player Leaderboard
+      </h2>
+      <div id="playerLeaderboard" class="space-y-3"></div>
+    </div>
+
+    <!-- Division Leaderboard -->
+    <div>
+      <h2 class="text-xl font-semibold mb-4 text-center">
+        🏢 Center Leaderboard
+      </h2>
+      <div id="centerLeaderboard" class="space-y-3"></div>
+    </div>
+
+    <div>
+
+      <div class="flex items-center justify-between mb-3">
+        
+        <button id="prevMatchBtn" class="px-3 py-1 rounded">
+          ⬅️
+        </button>
+
+        <button id="nextMatchBtn" class="px-3 py-1 rounded">
+          ➡️
+        </button>
+
+      </div>
+
+      <!-- Chart -->
+      <canvas id="supportChart"></canvas>
+
+    </div>
+  </div>
+  </section>
+
+  <!-- Next Matches Section -->
+  <section class="px-6 mb-12">
+    <h3 class="text-2xl font-semibold mb-6">🏏 Center Level Participation</h3>
+    <div id="nextMatches" class="space-y-6"></div>
+
+    <div class="relative p-5 rounded-2xl 
+    bg-gradient-to-br from-[#0f172a] via-[#111827] to-[#020617] 
+    shadow-lg shadow-slate-900/40 
+    border border-white/10 
+    backdrop-blur-md 
+    overflow-hidden">
+      <canvas id="participationChart" height="40"></canvas>
+    </div>
+  </section>
+
+  <script type="module">
+    import { initLeaderboards } from '/PPL2026/src/js/leaderboard.js';
+    initLeaderboards();
+  </script>
+
+  <script type="module">
+    import { renderParticipationChart } from '/PPL2026/src/js/participationChart.js';
+
+    renderParticipationChart("participationChart");
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script type="module">
+  import { initSupportChart } from '/PPL2026/src/js/supportChart.js';
+
+    initSupportChart({
+      canvasId: "supportChart",
+      nextBtnId: "nextMatchBtn",
+      prevBtnId: "prevMatchBtn"
+    });
+  </script>
+  
   <!-- Footer -->
   <footer class="text-center py-6 border-t border-gray-700 text-gray-400 mt-12">
     © 2026 IPL Fantasy Predictor
   </footer>
 
-  <script src="/PPL2026/src/js/schedule.js"></script>
   <script>
-    console.log(schedule);
-
-    function getNextMatches() {
-      const now = new Date();
-
-      const upcoming = schedule
-        .filter(m => new Date(m.time) > now)
-        .sort((a, b) => new Date(a.time) - new Date(b.time));
-
-      if (upcoming.length === 0) return [];
-
-      const firstMatchDate = new Date(upcoming[0].time).toDateString();
-
-      return upcoming.filter(m => new Date(m.time).toDateString() === firstMatchDate);
-    }
-
-    function formatCountdown(ms) {
-      const totalSeconds = Math.floor(ms / 1000);
-      const hrs = Math.floor(totalSeconds / 3600);
-      const mins = Math.floor((totalSeconds % 3600) / 60);
-      const secs = totalSeconds % 60;
-
-      return `${hrs}h ${mins}m ${secs}s`;
-    }
-
-    function renderNextMatches() {
-      const container = document.getElementById("nextMatches");
-      container.innerHTML = "";
-
-      const nextMatches = getNextMatches();
-
-      nextMatches.forEach((match, index) => {
-        const card = document.createElement("div");
-        card.className = "bg-[var(--card)] rounded-2xl p-6 text-center shadow-lg";
-
-        card.innerHTML = `
-          <div class="flex justify-center items-center gap-8 mb-6">
-            <div>
-              <img src="${match.team1Logo}" class="h-20 mx-auto mb-2" />
-              <p class="font-bold" style="color:${match.team1Color}">${match.team1}</p>
-            </div>
-
-            <span class="text-gray-400 text-xl">vs</span>
-
-            <div>
-              <img src="${match.team2Logo}" class="h-20 mx-auto mb-2" />
-              <p class="font-bold" style="color:${match.team2Color}">${match.team2}</p>
-            </div>
-          </div>
-
-          <p class="text-gray-400 mb-2">${new Date(match.time).toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-          <p id="countdown-${index}" class="text-yellow-400 font-semibold mb-4"></p>
-
-          <div class="w-full bg-gray-700 rounded-full h-4 overflow-hidden">
-            <div style="width:${match.support1}%; background:${match.team1Color}" class="h-4"></div>
-          </div>
-
-          <div class="flex justify-between text-sm mt-2">
-            <span>${match.team1} ${match.support1}%</span>
-            <span>${match.team2} ${match.support2}%</span>
-          </div>
-        `;
-
-        container.appendChild(card);
-      });
-
-      startCountdowns(nextMatches);
-    }
-
-    function startCountdowns(matchesList) {
-      setInterval(() => {
-        const now = new Date();
-
-        matchesList.forEach((match, index) => {
-          const matchTime = new Date(match.time);
-          const diff = matchTime - now;
-
-          const el = document.getElementById(`countdown-${index}`);
-          if (!el) return;
-
-          if (diff <= 0) {
-            el.innerText = "Match Started";
-          } else {
-            el.innerText = "Starts in " + formatCountdown(diff);
-          }
-        });
-      }, 1000);
-    }
-
     // Theme Toggle Logic
     const app = document.getElementById("app");
     const toggle = document.getElementById("themeToggle");
@@ -168,6 +166,7 @@
       app.classList.add("light");
       toggle.innerText = "☀️";
     }
+    updateLogo();
 
     function updateLogo() {
       const isLight = app.classList.contains("light");
@@ -186,8 +185,6 @@
 
       updateLogo();
     });
-    
-    renderNextMatches();
   </script>
 
 </body>
